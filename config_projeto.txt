@@ -1,0 +1,6 @@
+Eu mudei o projeto de CommonJS para ES6 Modules
+Antes era usado -> const app = require("express") | module.exports = app
+
+Agora -> import express from "express" | export default app
+
+Assim fica mais simples já que utilizamos dessa forma no react/vite
