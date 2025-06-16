@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  nome      String
+  email     String   @unique
+  senha     String
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamento com médico
+  doctor Doctor?
+
+  @@map("users")
+}
+
+model Doctor {
+  id           String @id @default(uuid())
+  userId       String @unique
+  especialidade String?
+  crm          String @unique
+
+  // Relacionamentos
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+  schedules    Schedule[]
+
+  @@map("doctors")
+}
+
+model Appointment {
+  id              String            @id @default(uuid())
+  nomePaciente    String
+  emailPaciente   String
+  telefone        String?
+  medicoId        String
+  data            DateTime
+  hora            DateTime
+  status          AppointmentStatus @default(AGENDADA)
+  lembreteEnviado Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relacionamentos
+  medico Doctor @relation(fields: [medicoId], references: [id])
+
+  @@map("appointments")
+}
+
+model Schedule {
+  id         String @id @default(uuid())
+  medicoId   String
+  diaSemana  Int
+  horaInicio String
+  horaFim    String
+
+  // Relacionamentos
+  medico Doctor @relation(fields: [medicoId], references: [id], onDelete: Cascade)
+
+  @@map("schedules")
+}
+
+enum Role {
+  DOCTOR
+  RECEPTIONIST
+}
+
+enum AppointmentStatus {
+  AGENDADA
+  CANCELADA
+  REALIZADA
+}
