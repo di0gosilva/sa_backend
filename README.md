@@ -1,6 +1,6 @@
-# Sistema de Agendamento Médico - Frontend
+# Sistema de Agendamento Médico - Backend
 
-Frontend em React para o sistema de agendamento médico, desenvolvido com Vite, Tailwind CSS e React Router DOM.
+Backend para o sistema de agendamento médico, desenvolvido com NodeJs, Prisma (ORM) e Postgres.
 
 ## 🚀 Tecnologias
 
