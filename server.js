@@ -3,6 +3,7 @@ const express = require("express")
 const cors = require("cors")
 const helmet = require("helmet")
 const rateLimit = require("express-rate-limit")
+const cookieParser = require("cookie-parser")
 
 // Importar rotas
 const authRoutes = require("./routes/auth")
@@ -19,7 +20,11 @@ const PORT = process.env.PORT || 3000
 
 // Middlewares de segurança
 app.use(helmet())
-app.use(cors())
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  credentials: true, // Permitir cookies e credenciais
+}))
+app.use(cookieParser())
 
 // Rate limiting
 const limiter = rateLimit({

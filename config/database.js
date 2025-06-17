@@ -1,15 +1,20 @@
 const { PrismaClient } = require("@prisma/client")
 
-const prisma = new PrismaClient({
-  log: process.env.NODE_ENV === "development" ? ["query", "info", "warn", "error"] : ["error"],
-})
+let prisma
 
-// Middleware para logs de queries em desenvolvimento
-if (process.env.NODE_ENV === "development") {
-  prisma.$on("query", (e) => {
-    console.log("Query: " + e.query)
-    console.log("Duration: " + e.duration + "ms")
+if (!global._prisma) {
+  global._prisma = new PrismaClient({
+    log: process.env.NODE_ENV === "development" ? ["query", "info", "warn", "error"] : ["error"],
   })
+
+  if (process.env.NODE_ENV === "development") {
+    global._prisma.$on("query", (e) => {
+      console.log("Query: " + e.query)
+      console.log("Duration: " + e.duration + "ms")
+    })
+  }
 }
+
+prisma = global._prisma
 
 module.exports = prisma

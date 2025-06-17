@@ -63,16 +63,38 @@ router.post("/login", async (req, res) => {
       expiresIn: process.env.JWT_EXPIRES_IN,
     })
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Usar cookies seguros em produção
+      maxAge: 24 * 60 * 60 * 1000, // Converter para milissegundos
+      sameSite: "strict", // Proteção contra CSRF
+    })
+
     // Remover senha da resposta
     const { senha: _, ...userWithoutPassword } = user
 
     res.json({
       message: "Login realizado com sucesso",
-      token,
       user: userWithoutPassword,
     })
   } catch (error) {
     console.error("Erro no login:", error)
+    res.status(500).json({ error: "Erro interno do servidor" })
+  }
+})
+
+router.post("/logout", (req, res) => {
+  try {
+    // Limpar o cookie de autenticação
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    })
+
+    res.json({ message: "Logout realizado com sucesso" })
+  } catch (error) {
+    console.error("Erro no logout:", error)
     res.status(500).json({ error: "Erro interno do servidor" })
   }
 })
