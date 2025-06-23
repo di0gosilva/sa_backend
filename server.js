@@ -18,12 +18,28 @@ const reminderJob = require("./jobs/reminderJob")
 const app = express()
 const PORT = process.env.PORT || 3000
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:5173",
+]
+
 // Middlewares de segurança
 app.use(helmet())
+
+// Configuração do CORS
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
-  credentials: true, // Permitir cookies e credenciais
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error("CORS não permitido para este domínio"))
+    }
+  },
+  credentials: true,
 }))
+
+// Middleware para parsing de cookies
 app.use(cookieParser())
 
 // Rate limiting

@@ -27,8 +27,8 @@ const registerSchema = Joi.object({
   }),
   crm: Joi.string().when("role", {
     is: "DOCTOR",
-    then: Joi.required(),
-    otherwise: Joi.forbidden(),
+    then: Joi.required().label("CRM é obrigatório para médicos"),
+    otherwise: Joi.any().strip(),
   }),
 })
 
