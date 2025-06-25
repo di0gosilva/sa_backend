@@ -35,6 +35,7 @@ const authorizeRoles = (...roles) => {
     }
 
     if (!roles.includes(req.user.role)) {
+      console.log(roles)
       return res.status(403).json({ error: "Acesso negado" })
     }
 
